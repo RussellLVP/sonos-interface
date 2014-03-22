@@ -30,15 +30,15 @@ SonosInterfaceImpl::~SonosInterfaceImpl() {
 void SonosInterfaceImpl::OnDeviceAvailable(SonosDeviceImpl* device) {
   devices_.insert(device);
 
-  for (auto iter = device_observers_.begin(); iter != device_observers_.end(); ++iter)
-    (*iter)->OnDeviceAvailable(device);
+  for (auto observer : device_observers_)
+    observer->OnDeviceAvailable(device);
 }
 
 void SonosInterfaceImpl::OnDeviceLost(SonosDeviceImpl* device) {
   devices_.erase(device);
 
-  for (auto iter = device_observers_.begin(); iter != device_observers_.end(); ++iter)
-    (*iter)->OnDeviceLost(device);
+  for (auto observer : device_observers_)
+    observer->OnDeviceLost(device);
 }
 
 void SonosInterfaceImpl::Start() {
@@ -49,11 +49,7 @@ void SonosInterfaceImpl::Start() {
 }
 
 std::list<SonosDevice*> SonosInterfaceImpl::GetDevices() const {
-  std::list<SonosDevice*> devices(devices_.size());
-  for (auto iter = devices_.begin(); iter != devices_.end(); ++iter)
-    devices.push_back(*iter);
-
-  return devices;
+  return std::list<SonosDevice*>(devices_.begin(), devices_.end());
 }
 
 bool SonosInterfaceImpl::AddDeviceObserver(SonosDeviceObserver* observer) {
